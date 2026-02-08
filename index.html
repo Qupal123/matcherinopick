@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Draft Tool</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  background:#060818;
+  color:#e8ebff;
+  font-family:'Inter',sans-serif;
+}
+.app{
+  display:grid;
+  grid-template-columns:340px 1fr;
+  min-height:100vh;
+}
+.map-panel{
+  padding:24px;
+  background:linear-gradient(180deg,#0b1440,#060818);
+  border-right:1px solid #7aa2ff33;
+}
+.map-box{
+  border-radius:22px;
+  overflow:hidden;
+  box-shadow:0 20px 60px #000;
+}
+.map-box img{width:100%;display:block}
+.map-name{
+  margin-top:16px;
+  font-family:'Orbitron';
+  text-align:center;
+  font-size:20px;
+  color:#6cf2c2;
+}
+.content{padding:40px}
+.set-switch,.map-switch{
+  display:flex;
+  gap:12px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+}
+button{
+  background:#ffffff10;
+  border:1px solid #7aa2ff33;
+  color:#e8ebff;
+  padding:10px 18px;
+  border-radius:14px;
+  cursor:pointer;
+  font-family:'Orbitron';
+}
+button.active{background:#7aa2ff;color:#000}
+.section-title{
+  margin-top:28px;
+  margin-bottom:10px;
+  font-weight:700;
+  letter-spacing:1.5px;
+}
+.pick{color:#7aa2ff}
+.ban{color:#ff6b6b}
+ul{
+  list-style:none;
+  padding:0;
+  margin:0;
+  display:grid;
+  gap:10px;
+}
+li{
+  background:#ffffff12;
+  padding:12px 16px;
+  border-radius:14px;
+  font-weight:600;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<div class="map-panel">
+  <div class="map-box"><img id="mapImg"></div>
+  <div class="map-name" id="mapName"></div>
+</div>
+
+<div class="content">
+
+<div class="set-switch">
+  <button onclick="setSet(1,this)" class="active">SET 1</button>
+  <button onclick="setSet(2,this)">SET 2</button>
+  <button onclick="setSet(3,this)">SET 3</button>
+  <button onclick="setSet(4,this)">SET 4</button>
+  <button onclick="setSet(5,this)">SET 5</button>
+</div>
+
+<div class="map-switch">
+  <button onclick="setMap(0,this)" class="active">MAP 1</button>
+  <button onclick="setMap(1,this)">MAP 2</button>
+  <button onclick="setMap(2,this)">MAP 3</button>
+</div>
+
+<div class="section-title pick">ПИК</div>
+<ul id="picks"></ul>
+
+<div class="section-title ban">БАН</div>
+<ul id="bans"></ul>
+
+</div>
+</div>
+
+<script>
+const mapImg=document.getElementById("mapImg");
+const mapName=document.getElementById("mapName");
+const picksEl=document.getElementById("picks");
+const bansEl=document.getElementById("bans");
+
+let currentSet=1;
+let currentMap=0;
+
+const data={
+1:{maps:[
+ {name:"Ring of Fire",img:"img/set1/map1.png",
+  picks:["Bo · Emz · Spike","Bo · Fang · Spike","Emz · Spike · Tick"],
+  bans:["Crow · Fang · Mortis"]},
+ {name:"Dueling Beetles",img:"img/set1/map2.png",
+  picks:["Emz · Meeple · Mortis","Barley · Crow · Finx","Emz · Gray · Meeple","Colt · Finx · Mortis"],
+  bans:["Mina · Mortis · Spike","Colt · Crow · Mina","Colt · Kenji · Pierce"]},
+ {name:"Open Business",img:"img/set1/map3.png",
+  picks:["Emz · Frank · Gray","Finx · Frank · Gray","Emz · Meeple · Mortis"],
+  bans:["Barley · Kenji · Pierce","Gray · Hank · Mina","Berry · Frank · Meeple"]}
+]},
+2:{maps:[
+ {name:"Hard Rock Mine",img:"img/set2/map1.png",
+  picks:["Emz · Gus · Lily","Emz · Gus · Mortis"],
+  bans:["Janet · Lily · Spike"]},
+ {name:"Double Swoosh",img:"img/set2/map2.png",
+  picks:["Byron · Mortis · Rico","Gus · Mortis · Spike","Meeple · Mortis · Rico"],
+  bans:["Amber · Crow · Otis","Crow · Otis · Tara","Crow · Otis · Spike"]},
+ {name:"Deathcap Trap",img:"img/set2/map3.png",
+  picks:["Amber · Gene · Tara","Crow · Janet · Kenji","Crow · Mortis · Tara"],
+  bans:["Larry & Lawrie · Penny · Spike","Emz · Gus · Spike","Emz · Pierce · Ruffs"]}
+]},
+3:{maps:[
+ {name:"Shooting Star",img:"img/set3/map1.png",
+  picks:["Angelo · Byron · Gray","Angelo · Gene · Gray","Angelo · Gray · Piper"],
+  bans:["Gene · Piper · Spike","Gus · Nani · Sprout"]},
+ {name:"Hideout",img:"img/set3/map2.png",
+  picks:["Belle · Gray · Spike","Byron · Mina · Nani","Brock · Byron · Nani","Brock · Nani · Piper"],
+  bans:["Gene · Nani · Piper","Gus · Mortis · Piper"]},
+ {name:"Layer Cake",img:"img/set3/map3.png",
+  picks:["Byron · Gene · Mina","Byron · Gray · Nani","Angelo · Byron · Mortis"],
+  bans:["Gus · Mortis · Spike","Brock · Gus · Mortis","Gene · Kaze · Squeak"]}
+]},
+4:{maps:[
+ {name:"Super Beach",img:"img/set4/map1.png",
+  picks:["Emz · Mortis · Rico","Bibi · Mortis · Rico","Dynamike · Mortis · Rico"],
+  bans:["Bea · Frank · Bull","Cordelius · Max · Otis","Edgar · Mortis · Stu"]},
+ {name:"Pinhole Punt",img:"img/set4/map2.png",
+  picks:["Emz · Frank · Glowbert","Emz · Frank · Spike","Emz · Frank · Rico"],
+  bans:["Bibi · Emz · Griff","Bibi · Emz · Spike","Emz · Fang · Rico"]},
+ {name:"Sneaky Fields",img:"img/set4/map3.png",
+  picks:["Mortis · Otis · Rico","Frank · Pierce · Ruffs","Colt · Ruffs · Spike"],
+  bans:["Bull · Shelly · Spike","Mina · Spike · Stu","Maisie · Rico · Shelly"]}
+]},
+5:{maps:[
+ {name:"Hot Potato",img:"img/set5/map1.png",
+  picks:["Chuck","Lily","Barley","Ruffs","Meeple","Otis","Squeak"],
+  bans:["Crow · Mico · Rico","Berry · Nita · Rico","Berry · Cordelius · Rico"]},
+ {name:"Safe Zone",img:"img/set5/map2.png",
+  picks:["Angelo · Melodie · Spike","Angelo · Carl · Colt","Angelo · Colt · Melodie","Colt · Melodie · Penny"],
+  bans:["Belle · Colt · Kaze","Melodie · Piper · Spike","Carl · Colt · Lily"]},
+ {name:"Bridge Too Far",img:"img/set5/map3.png",
+  picks:["Colt · Kaze · Nani","Colt · Nani · Spike","Colt · Mico · Spike","Angelo · Colt · Nani"],
+  bans:["Amber · Colt · Eve","Belle · Kaze · Spike","Amber · Kaze · Otis","Mico · Nani · Pierce"]}
+]}
+};
+
+function render(){
+  const m=data[currentSet].maps[currentMap];
+  mapImg.src=m.img;
+  mapName.textContent=m.name;
+  picksEl.innerHTML="";
+  bansEl.innerHTML="";
+  m.picks.forEach(p=>picksEl.innerHTML+=`<li>${p}</li>`);
+  m.bans.forEach(b=>bansEl.innerHTML+=`<li>${b}</li>`);
+}
+
+function setSet(n,btn){
+  currentSet=n;
+  currentMap=0;
+  document.querySelectorAll(".set-switch button").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll(".map-switch button").forEach((b,i)=>b.classList.toggle("active",i===0));
+  render();
+}
+function setMap(n,btn){
+  currentMap=n;
+  document.querySelectorAll(".map-switch button").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  render();
+}
+render();
+</script>
+
+</body>
+</html>
