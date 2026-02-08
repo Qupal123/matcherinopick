@@ -19,6 +19,8 @@ body{
   grid-template-columns:340px 1fr;
   min-height:100vh;
 }
+
+/* LEFT MAP PANEL */
 .map-panel{
   padding:24px;
   background:linear-gradient(180deg,#0b1440,#060818);
@@ -29,7 +31,10 @@ body{
   overflow:hidden;
   box-shadow:0 20px 60px #000;
 }
-.map-box img{width:100%;display:block}
+.map-box img{
+  width:100%;
+  display:block;
+}
 .map-name{
   margin-top:16px;
   font-family:'Orbitron';
@@ -37,7 +42,11 @@ body{
   font-size:20px;
   color:#6cf2c2;
 }
-.content{padding:40px}
+
+/* RIGHT CONTENT */
+.content{
+  padding:40px;
+}
 .set-switch,.map-switch{
   display:flex;
   gap:12px;
@@ -53,7 +62,11 @@ button{
   cursor:pointer;
   font-family:'Orbitron';
 }
-button.active{background:#7aa2ff;color:#000}
+button.active{
+  background:#7aa2ff;
+  color:#000;
+}
+
 .section-title{
   margin-top:28px;
   margin-bottom:10px;
@@ -62,6 +75,7 @@ button.active{background:#7aa2ff;color:#000}
 }
 .pick{color:#7aa2ff}
 .ban{color:#ff6b6b}
+
 ul{
   list-style:none;
   padding:0;
@@ -75,6 +89,63 @@ li{
   border-radius:14px;
   font-weight:600;
 }
+
+/* ===================== */
+/* 📱 MOBILE ADAPTATION */
+/* ===================== */
+@media (max-width:768px){
+  .app{
+    grid-template-columns:1fr;
+  }
+
+  .map-panel{
+    border-right:none;
+    border-bottom:1px solid #7aa2ff33;
+    padding:16px;
+  }
+
+  .map-box{
+    max-width:320px;
+    margin:0 auto;
+  }
+
+  .map-name{
+    font-size:18px;
+  }
+
+  .content{
+    padding:20px 16px;
+  }
+
+  .set-switch,
+  .map-switch{
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    gap:10px;
+    padding-bottom:6px;
+  }
+
+  .set-switch::-webkit-scrollbar,
+  .map-switch::-webkit-scrollbar{
+    display:none;
+  }
+
+  button{
+    flex:0 0 auto;
+    padding:10px 16px;
+    font-size:14px;
+  }
+
+  li{
+    font-size:14px;
+    padding:12px 14px;
+  }
+
+  .section-title{
+    font-size:14px;
+    margin-top:22px;
+  }
+}
 </style>
 </head>
 
@@ -82,34 +153,38 @@ li{
 
 <div class="app">
 
-<div class="map-panel">
-  <div class="map-box"><img id="mapImg"></div>
-  <div class="map-name" id="mapName"></div>
-</div>
+  <!-- MAP -->
+  <div class="map-panel">
+    <div class="map-box">
+      <img id="mapImg">
+    </div>
+    <div class="map-name" id="mapName"></div>
+  </div>
 
-<div class="content">
+  <!-- CONTENT -->
+  <div class="content">
 
-<div class="set-switch">
-  <button onclick="setSet(1,this)" class="active">SET 1</button>
-  <button onclick="setSet(2,this)">SET 2</button>
-  <button onclick="setSet(3,this)">SET 3</button>
-  <button onclick="setSet(4,this)">SET 4</button>
-  <button onclick="setSet(5,this)">SET 5</button>
-</div>
+    <div class="set-switch">
+      <button onclick="setSet(1,this)" class="active">SET 1</button>
+      <button onclick="setSet(2,this)">SET 2</button>
+      <button onclick="setSet(3,this)">SET 3</button>
+      <button onclick="setSet(4,this)">SET 4</button>
+      <button onclick="setSet(5,this)">SET 5</button>
+    </div>
 
-<div class="map-switch">
-  <button onclick="setMap(0,this)" class="active">MAP 1</button>
-  <button onclick="setMap(1,this)">MAP 2</button>
-  <button onclick="setMap(2,this)">MAP 3</button>
-</div>
+    <div class="map-switch">
+      <button onclick="setMap(0,this)" class="active">MAP 1</button>
+      <button onclick="setMap(1,this)">MAP 2</button>
+      <button onclick="setMap(2,this)">MAP 3</button>
+    </div>
 
-<div class="section-title pick">ПИК</div>
-<ul id="picks"></ul>
+    <div class="section-title pick">ПИК</div>
+    <ul id="picks"></ul>
 
-<div class="section-title ban">БАН</div>
-<ul id="bans"></ul>
+    <div class="section-title ban">БАН</div>
+    <ul id="bans"></ul>
 
-</div>
+  </div>
 </div>
 
 <script>
@@ -122,50 +197,6 @@ let currentSet=1;
 let currentMap=0;
 
 const data={
-1:{maps:[
- {name:"Ring of Fire",img:"img/set1/map1.png",
-  picks:["Bo · Emz · Spike","Bo · Fang · Spike","Emz · Spike · Tick"],
-  bans:["Crow · Fang · Mortis"]},
- {name:"Dueling Beetles",img:"img/set1/map2.png",
-  picks:["Emz · Meeple · Mortis","Barley · Crow · Finx","Emz · Gray · Meeple","Colt · Finx · Mortis"],
-  bans:["Mina · Mortis · Spike","Colt · Crow · Mina","Colt · Kenji · Pierce"]},
- {name:"Open Business",img:"img/set1/map3.png",
-  picks:["Emz · Frank · Gray","Finx · Frank · Gray","Emz · Meeple · Mortis"],
-  bans:["Barley · Kenji · Pierce","Gray · Hank · Mina","Berry · Frank · Meeple"]}
-]},
-2:{maps:[
- {name:"Hard Rock Mine",img:"img/set2/map1.png",
-  picks:["Emz · Gus · Lily","Emz · Gus · Mortis"],
-  bans:["Janet · Lily · Spike"]},
- {name:"Double Swoosh",img:"img/set2/map2.png",
-  picks:["Byron · Mortis · Rico","Gus · Mortis · Spike","Meeple · Mortis · Rico"],
-  bans:["Amber · Crow · Otis","Crow · Otis · Tara","Crow · Otis · Spike"]},
- {name:"Deathcap Trap",img:"img/set2/map3.png",
-  picks:["Amber · Gene · Tara","Crow · Janet · Kenji","Crow · Mortis · Tara"],
-  bans:["Larry & Lawrie · Penny · Spike","Emz · Gus · Spike","Emz · Pierce · Ruffs"]}
-]},
-3:{maps:[
- {name:"Shooting Star",img:"img/set3/map1.png",
-  picks:["Angelo · Byron · Gray","Angelo · Gene · Gray","Angelo · Gray · Piper"],
-  bans:["Gene · Piper · Spike","Gus · Nani · Sprout"]},
- {name:"Hideout",img:"img/set3/map2.png",
-  picks:["Belle · Gray · Spike","Byron · Mina · Nani","Brock · Byron · Nani","Brock · Nani · Piper"],
-  bans:["Gene · Nani · Piper","Gus · Mortis · Piper"]},
- {name:"Layer Cake",img:"img/set3/map3.png",
-  picks:["Byron · Gene · Mina","Byron · Gray · Nani","Angelo · Byron · Mortis"],
-  bans:["Gus · Mortis · Spike","Brock · Gus · Mortis","Gene · Kaze · Squeak"]}
-]},
-4:{maps:[
- {name:"Super Beach",img:"img/set4/map1.png",
-  picks:["Emz · Mortis · Rico","Bibi · Mortis · Rico","Dynamike · Mortis · Rico"],
-  bans:["Bea · Frank · Bull","Cordelius · Max · Otis","Edgar · Mortis · Stu"]},
- {name:"Pinhole Punt",img:"img/set4/map2.png",
-  picks:["Emz · Frank · Glowbert","Emz · Frank · Spike","Emz · Frank · Rico"],
-  bans:["Bibi · Emz · Griff","Bibi · Emz · Spike","Emz · Fang · Rico"]},
- {name:"Sneaky Fields",img:"img/set4/map3.png",
-  picks:["Mortis · Otis · Rico","Frank · Pierce · Ruffs","Colt · Ruffs · Spike"],
-  bans:["Bull · Shelly · Spike","Mina · Spike · Stu","Maisie · Rico · Shelly"]}
-]},
 5:{maps:[
  {name:"Hot Potato",img:"img/set5/map1.png",
   picks:["Chuck","Lily","Barley","Ruffs","Meeple","Otis","Squeak"],
@@ -197,12 +228,14 @@ function setSet(n,btn){
   document.querySelectorAll(".map-switch button").forEach((b,i)=>b.classList.toggle("active",i===0));
   render();
 }
+
 function setMap(n,btn){
   currentMap=n;
   document.querySelectorAll(".map-switch button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
   render();
 }
+
 render();
 </script>
 
